@@ -2,6 +2,7 @@
 import os
 import tryToDoIt
 
+
 class Node:
     def __init__(self, prob, symbol, left=None, right=None):
         # probability of symbol
@@ -107,7 +108,7 @@ def Huffman_Encoding(data):
     huffman_encoding = Calculate_Codes(nodes[0])
     print("symbols with codes", huffman_encoding)
     Total_Gain(data, huffman_encoding)
-    encoded_output = Output_Encoded(data,huffman_encoding)
+    encoded_output = Output_Encoded(data, huffman_encoding)
     return encoded_output, nodes[0]
 
 
@@ -126,13 +127,11 @@ def Huffman_Decoding(encoded_data, huffman_tree):
     string = ''.join([str(item) for item in decoded_output])
     return string
 
-def compressionLevel1():
-    if os.path.exists("input.txt"):
-        inputFile = open("input.txt", "r+")
-    else:
-        inputFile = open("input.txt", "r+")
+
+def compression():
+
+    inputFile = open("input.txt", "r+")
     data = inputFile.readlines()
-    print(data)
     encoding, tree = Huffman_Encoding(data)
     print("Encoded output", encoding)
     print("Decoded Output", Huffman_Decoding(encoding, tree))
