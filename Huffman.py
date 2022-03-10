@@ -64,8 +64,11 @@ def Total_Gain(data, coding):
     for symbol in symbols:
         count = data.count(symbol)
         after_compression += count * len(coding[symbol]) #calculate how many bit is required for that symbol in total
+    compression_ratio= before_compression/after_compression
     print("Space usage before compression (in bits):", before_compression)
     print("Space usage after compression (in bits):",  after_compression)
+    print("Compression ratio: ",compression_ratio)
+
 
 def Huffman_Encoding(data):
     #create dict and calculate prob.

@@ -21,7 +21,7 @@ def main():
 
     array = ListToNpArray(gray_level_list)
     print(calculate_probability(array))
-    print(calculate_entropy(calculate_probability(array)))
+    print("Entropy: ", calculate_entropy(calculate_probability(array)))
     # my_filter = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
     # im_out = convolve(arr, my_filter)  # 3. foto çıkıyor arrayı burası.
     # print("Photo 4:")
