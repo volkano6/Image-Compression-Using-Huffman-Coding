@@ -1,3 +1,5 @@
+import fileinput
+
 import numpy
 from PIL import *
 from PIL import Image
@@ -5,6 +7,7 @@ import numpy as np
 import os
 import Huffman
 import math
+
 
 def main():
     img = readPILimg()
@@ -14,14 +17,14 @@ def main():
     file = open("input.txt", "r+")
     writeMatrixToFile(file, img, arr)
 
-    # print("compressionLevel1 :")
+    print("compressionLevel1 :")
     print("---------")
-    # compressionLevel1("input.txt")
+    compressionLevel1("input.txt")
     gray_level_list = readFileToList("input.txt")
 
-    array = ListToNpArray(gray_level_list)
-    print(calculate_probability(array))
-    print("Entropy: ", calculate_entropy(calculate_probability(array)))
+    # array = ListToNpArray(gray_level_list)
+    # print(calculate_probability(array))
+    # print(calculate_entropy(calculate_probability(array)))
     # my_filter = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
     # im_out = convolve(arr, my_filter)  # 3. foto çıkıyor arrayı burası.
     # print("Photo 4:")
@@ -30,25 +33,54 @@ def main():
     # im_out = threshold(im_out, 60, 0, 100)
     # new_img = np2PIL(im_out)
     # new_img.show()
-    #
+
 
 
 def compressionLevel1(file):
-    file_data = np.loadtxt(file, dtype=int)
-    print(file_data)
+    #Huffman.Huffman_Encoding(Array2DToText(file))
 
-    metin = ""
-    for val in range(0, 240):
-        for val2 in range(0, 384):
-            metin = metin + ' ' + str(file_data[val][val2])
-
-    print(metin)
-    Huffman.Huffman_Encoding(metin)
+    encoding, tree = Huffman.Huffman_Encoding(readFileToList(file))
+    # print("Encoded output", encoding)
+    # print("Decoded Output", Huffman.Huffman_Decoding(encoding, tree))
+    # saveBinFile(encoding)
+    # readBinFile("compressed_file.bin")
 
 
 def ListToNpArray(list):
     arr = numpy.array(list)
     return arr
+
+
+def Array2DToText(file):
+    file_data = np.loadtxt(file, dtype=int)
+    print(file_data)
+
+    text = ""
+    for val in range(0, 14):
+        for val2 in range(0, 12):
+            text = text + ' ' + str(file_data[val][val2])
+
+    return text
+
+
+def saveBinFile(str):
+    bin_file = open("compressed_file.bin", "wb+")
+    bin_file.write(str)
+    bin_file.close()
+
+def readBinFile(binFile):
+    # file = open(binFile, "rb")
+    #
+    # byte = file.read(1)
+    # while byte:
+    #     print(byte)
+    #     byte = file.read(1)
+    with open(binFile, mode='rb') as file:  # b is important -> binary
+        fileContent = file.read()
+
+def readFileTo1DArray(file):
+    file_data = np.loadtxt(file, dtype=int)
+    return file_data
 
 
 def readFileToList(file):
@@ -76,11 +108,13 @@ def calculate_probability(arr):
 
     return probArr
 
+
 def calculate_entropy(arr):
     entropyVal = 0
     for ind in range(0, len(arr)):
-        entropyVal += arr[ind] * math.log(arr[ind])
+        entropyVal += arr[ind] * math.log(arr[ind], 2)
     return entropyVal * (-1)
+
 
 def readFileTo2DArray(file):
     file_data = np.loadtxt(file, dtype=int)
@@ -105,11 +139,12 @@ def readFile(fileName):
 
 def readPILimg():
     # img dosyasının konumunu belirler.
-    img = Image.open("uncompressed_cat2.png")
+    img = Image.open("muhi.png")
     # dosyanın içeriğini gösterir.
     img.show()
     # look at the function.
     img_gray = color2gray(img)
+    print(img_gray)
     print("Photo 2:")
     img_gray.show()
     img_gray.save("newImg", 'png')
