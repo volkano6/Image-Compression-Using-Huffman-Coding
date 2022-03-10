@@ -5,6 +5,9 @@ from PIL import *
 from PIL import Image
 import numpy as np
 import os
+
+from numpy import ndarray
+
 import Huffman
 import math
 
@@ -41,8 +44,8 @@ def compressionLevel1(file):
     encoding, tree = Huffman.Huffman_Encoding(readFileToList(file))
     print("Encoded output", encoding)
     print("Decoded Output", Huffman.Huffman_Decoding(encoding, tree))
-    # saveBinFile(encoding)
-    # readBinFile("compressed_file.bin")
+    saveBinFile(encoding)
+    readBinFile("compressed_file.bin")
 
 
 def ListToNpArray(list):
@@ -63,19 +66,15 @@ def Array2DToText(file):
 
 
 def saveBinFile(str):
-    bin_file = open("compressed_file.bin", "wb+")
-    bin_file.write(str)
-    bin_file.close()
+    f = open("compressed_file.bin", "wb+")
+    textToArray = np.array(list(str))
+    arr = bytearray(textToArray)
+    f.write(arr)
+    f.close()
 
-def readBinFile(binFile):
-    # file = open(binFile, "rb")
-    #
-    # byte = file.read(1)
-    # while byte:
-    #     print(byte)
-    #     byte = file.read(1)
-    with open(binFile, mode='rb') as file:  # b is important -> binary
-        fileContent = file.read()
+
+
+
 
 def readFileTo1DArray(file):
     file_data = np.loadtxt(file, dtype=int)
