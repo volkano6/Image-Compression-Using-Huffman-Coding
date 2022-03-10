@@ -22,9 +22,8 @@ def main():
     compressionLevel1("input.txt")
     gray_level_list = readFileToList("input.txt")
 
-    # array = ListToNpArray(gray_level_list)
-    # print(calculate_probability(array))
-    # print(calculate_entropy(calculate_probability(array)))
+    array = ListToNpArray(gray_level_list)
+    #
     # my_filter = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
     # im_out = convolve(arr, my_filter)  # 3. foto çıkıyor arrayı burası.
     # print("Photo 4:")
@@ -40,8 +39,8 @@ def compressionLevel1(file):
     #Huffman.Huffman_Encoding(Array2DToText(file))
 
     encoding, tree = Huffman.Huffman_Encoding(readFileToList(file))
-    # print("Encoded output", encoding)
-    # print("Decoded Output", Huffman.Huffman_Decoding(encoding, tree))
+    print("Encoded output", encoding)
+    print("Decoded Output", Huffman.Huffman_Decoding(encoding, tree))
     # saveBinFile(encoding)
     # readBinFile("compressed_file.bin")
 
@@ -95,18 +94,6 @@ def readFileToList(file):
     data_into_list = list(map(int, data_into_list))
     my_file.close()
     return data_into_list
-
-
-def calculate_probability(arr):
-    denominator = len(arr)
-    unique, counts = numpy.unique(arr, return_counts=True)
-    countOfVal = dict(zip(unique, counts))
-    probArr = []
-
-    for ind in range(0, len(countOfVal)):
-        probArr.append(countOfVal.get(ind) / denominator)
-
-    return probArr
 
 
 def calculate_entropy(arr):

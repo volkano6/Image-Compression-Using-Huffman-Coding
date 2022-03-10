@@ -1,4 +1,5 @@
 # A Huffman Tree Node
+import math
 import os
 import tryToDoIt
 
@@ -75,15 +76,35 @@ def Huffman_Encoding(data):
     #create dict and calculate prob.
     symbol_with_probs = Calculate_Probability(data)
     symbols = symbol_with_probs.keys()
-    probabilities = symbol_with_probs.values()
+    counts = symbol_with_probs.values()
+    denominator = 0
+    for ind in range(len(counts)):
+        denominator += ind
+
+    probabilities = []
+    for ind in range(1, len(counts)):
+        probabilities.append(ind / denominator)
+
+
+    entropyVal = 0
+
+    for ind in range(1, len(probabilities)):
+        entropyVal = (entropyVal + (probabilities[ind] * math.log(probabilities[ind], 2)))
+
+    entropyVal = entropyVal * (-1)
+
     print("symbols: ", symbols)
+    print("counts: ", counts)
+    print("entropy: ", entropyVal)
     print("probabilities: ", probabilities)
+
 
     nodes = []
 
     # converting symbols and probabilities into huffman tree nodes
     for symbol in symbols:
         nodes.append(Node(symbol_with_probs.get(symbol), symbol))
+
 
     while len(nodes) > 1:
         # sort all the nodes in ascending order based on their probability
@@ -107,6 +128,21 @@ def Huffman_Encoding(data):
 
     huffman_encoding = Calculate_Codes(nodes[0])
     print("symbols with codes", huffman_encoding)
+
+    symbolsLength = []
+    length: [int] = []
+    for j in huffman_encoding.values():
+        symbolsLength.append(j)
+        for x in range(len(symbolsLength)):
+            length.append((len(symbolsLength[x])))
+            # lAve += ((len(symbolsLength[x])) * probs[x]) + lAve
+
+        lAve = 0.00
+        for x, y in zip(range(len(length)), range(len(probabilities))):
+            lAve += int(length[x]) * float(probabilities[y])
+        print("Average Code Length", lAve)
+
+
     Total_Gain(data, huffman_encoding)
     encoded_output = Output_Encoded(data, huffman_encoding)
     return encoded_output, nodes[0]
