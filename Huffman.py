@@ -66,7 +66,7 @@ def Total_Gain(data, coding):
     for symbol in symbols:
         count = data.count(symbol)
         after_compression += count * len(coding[symbol]) #calculate how many bit is required for that symbol in total
-    compression_ratio= before_compression/after_compression
+    compression_ratio = before_compression/after_compression
     print("Space usage before compression (in bits):", before_compression)
     print("Space usage after compression (in bits):",  after_compression)
     print("Compression ratio: ",compression_ratio)
@@ -133,14 +133,13 @@ def Huffman_Encoding(data):
     length: [int] = []
     for j in huffman_encoding.values():
         symbolsLength.append(j)
-        for x in range(len(symbolsLength)):
-            length.append((len(symbolsLength[x])))
-            # lAve += ((len(symbolsLength[x])) * probs[x]) + lAve
+    for x in range(len(symbolsLength)):
+        length.append((len(symbolsLength[x])))
 
-        lAve = 0.00
-        for x, y in zip(range(len(length)), range(len(probabilities))):
-            lAve += int(length[x]) * float(probabilities[y])
-        print("Average Code Length", lAve)
+    lAve = 0.00
+    for x, y in zip(range(len(length)), range(len(probabilities))):
+        lAve += int(length[x]) * float(probabilities[y])
+    print("Average Code Length", lAve)
 
 
     Total_Gain(data, huffman_encoding)
@@ -167,10 +166,11 @@ def Huffman_Decoding(encoded_data, huffman_tree):
 def compression():
 
     inputFile = open("input.txt", "r+")
-    data = inputFile.readlines()
+    data = inputFile.read()
     encoding, tree = Huffman_Encoding(data)
     print("Encoded output", encoding)
     print("Decoded Output", Huffman_Decoding(encoding, tree))
+
 
 
 
