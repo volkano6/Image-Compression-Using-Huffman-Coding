@@ -1,5 +1,5 @@
 import fileinput
-
+import csv
 import numpy
 from PIL import *
 from PIL import Image
@@ -19,7 +19,7 @@ def main():
 
     print("compressionLevel1 :")
     print("---------")
-    compressionLevel1("input.txt")
+    compressionLevel2("input.txt",img)
     # gray_level_list = readFileToList("input.txt")
     #
     # array = ListToNpArray(gray_level_list)
@@ -36,21 +36,89 @@ def main():
 
 
 
-def compressionLevel1(file):
-    #Huffman.Huffman_Encoding(Array2DToText(file))
+def compressionLevel2(file,img):
+
+    nrows = img.size[0]
+    ncols = img.size[1]
+
 
     encoding, tree = Huffman.Huffman_Encoding(readFileToList(file))
     print("Encoded output", encoding)
-    print("Decoded Output", Huffman.Huffman_Decoding(encoding, tree))
-    # saveBinFile(encoding)
-    # readBinFile("compressed_file.bin")
 
+    # saves binary code in new file.
+    with open("compressed_file.txt", "w+") as f:
+        f.write(encoding)
 
+    # saves binary codes ftrom new file to huffman decodding.
+    compressedFile = open("compressed_file.txt", "r+")
+    newEncoding = compressedFile.read()
+    print("Decoded Output", Huffman.Huffman_Decoding(newEncoding, tree))
+
+    #yeni string decodeyi iki boyutlu araya atar.
+    newImgArr = strToArr2DWithSpace(Huffman.Huffman_Decoding(newEncoding, tree), nrows, ncols)
+    print(newImgArr)
+    #convertMatrixToImage(newImgArr)
+    #stringToArray2DForImg(14, 12, newImgArr)
+    convertMatrixToImage(newImgArr)
+
+def convertMatrixToImage(arr, im=None):
+    # create a numpy array from scratch
+    # using arange function.
+    # 1024x720 = 737280 is the amount
+    # of pixels.
+    # np.uint8 is a data type containing
+    # numbers ranging from 0 to 255
+    # and no non-negative integers
+    arrRow = len(arr)
+    arrColmn = len(arr[0])
+    size = arrRow*arrColmn
+    array = np.arange(0, size, 1, np.uint8)
+
+    # check type of array
+    print(type(array))
+
+    # our array will be of width
+    # 737280 pixels That means it
+    # will be a long dark line
+    print(array.shape)
+
+    # Reshape the array into a
+    # familiar resoluition
+    array = np.reshape(array, (arrColmn, arrRow))
+
+    # show the shape of the array
+    print(array.shape)
+
+    # show the array
+    print(array)
+
+    # creating image object of
+    # above array
+    data = im.fromarray(array)
+
+    # saving the final output
+    # as a PNG file
+    data.save("restoredImg.png")
+
+def strToArr2DWithSpace(str,row, colmn):
+    arr = np.fromstring(str, sep=" ", dtype=int)
+    arr2D = np.reshape(arr, (colmn, row))
+    return arr2D
 
 def ListToNpArray(list):
     arr = numpy.array(list)
     return arr
 
+def stringToArray2DForImg(h,w,str):
+    arr2D = [w][h]
+    arr1D = readFileTo1DArray(str)
+    allPixels = 0
+    while allPixels <= h + w:
+        for ind in range(0, h):
+            for ind2 in range(0, w):
+                arr2D[ind][ind2] = arr1D[allPixels]
+                allPixels += 1
+    return print(arr2D)
 
 def Array2DToText(file):
     file_data = np.loadtxt(file, dtype=int)
@@ -70,15 +138,8 @@ def saveBinFile(str):
     # arr = bytearray(textToArray)
     # f.write(arr)
     # f.close()
-    arr = list(str)
-    strfile = r"test.txt"
-    buffer = bytes(arr)
+    pass
 
-    print(buffer)
-
-    with open(strfile, "bw") as f:
-        f.write(buffer)
-    print("File written, reading it back")
 
 def readBinFile(binFile):
     with open(binFile, "br") as f:
