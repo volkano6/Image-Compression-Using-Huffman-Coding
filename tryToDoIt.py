@@ -59,11 +59,38 @@ def compressionLevel2(file,img):
     print(newImgArr)
     #convertMatrixToImage(newImgArr)
     #stringToArray2DForImg(14, 12, newImgArr)
-    convertMatrixToImage(newImgArr)
+    convertMatrixToImage(newImgArr, "restoredImage.png")
 
-def convertMatrixToImage(arr, im=None):
+
+
+    diff_arr= difference(newImgArr)
+    print("difference pixels :" ,difference(newImgArr))
+
+
+def difference(arr):
+    nrow= len(arr)
+    ncolumn= len(arr[0])
+
+    darr= [[0]*ncolumn]*nrow
+    for i in range(nrow):
+        for j in range(1,ncolumn):
+            darr[i][j] = arr[i][j] - arr[i][j-1]
+
+    diff_arr = darr
+    pivot = darr[0][0]
+    diff_arr[0][0]= darr[0][0]-pivot
+    for i in range (1,nrow):
+        diff_arr[i][0] = darr[i][0] - darr[i-1][0]
+    diff_arr= np.matrix(diff_arr)
+
+    return diff_arr
+
+
+
+
+def convertMatrixToImage(arr, str):
     #convert 2D array to image
-    cv2.imwrite("newphoto.png",arr)
+    cv2.imwrite(str,arr)
 
 
 def strToArr2DWithSpace(str,row, colmn):
