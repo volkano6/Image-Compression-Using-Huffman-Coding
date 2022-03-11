@@ -5,9 +5,7 @@ from PIL import *
 from PIL import Image
 import numpy as np
 import os
-
 from numpy import ndarray
-
 import Huffman
 import math
 
@@ -16,16 +14,15 @@ def main():
     img = readPILimg()
     arr = PIL2np(img)
     print("---------")
-    print(arr)
     file = open("input.txt", "r+")
     writeMatrixToFile(file, img, arr)
 
     print("compressionLevel1 :")
     print("---------")
     compressionLevel1("input.txt")
-    gray_level_list = readFileToList("input.txt")
-
-    array = ListToNpArray(gray_level_list)
+    # gray_level_list = readFileToList("input.txt")
+    #
+    # array = ListToNpArray(gray_level_list)
     #
     # my_filter = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
     # im_out = convolve(arr, my_filter)  # 3. foto çıkıyor arrayı burası.
@@ -38,14 +35,16 @@ def main():
 
 
 
+
 def compressionLevel1(file):
     #Huffman.Huffman_Encoding(Array2DToText(file))
 
     encoding, tree = Huffman.Huffman_Encoding(readFileToList(file))
     print("Encoded output", encoding)
     print("Decoded Output", Huffman.Huffman_Decoding(encoding, tree))
-    saveBinFile(encoding)
-    readBinFile("compressed_file.bin")
+    # saveBinFile(encoding)
+    # readBinFile("compressed_file.bin")
+
 
 
 def ListToNpArray(list):
@@ -66,13 +65,28 @@ def Array2DToText(file):
 
 
 def saveBinFile(str):
-    f = open("compressed_file.bin", "wb+")
-    textToArray = np.array(list(str))
-    arr = bytearray(textToArray)
-    f.write(arr)
-    f.close()
+    # f = open("compressed_file.bin", "wb+")
+    # textToArray = np.array(list(str))
+    # arr = bytearray(textToArray)
+    # f.write(arr)
+    # f.close()
+    arr = list(str)
+    strfile = r"test.txt"
+    buffer = bytes(arr)
 
+    print(buffer)
 
+    with open(strfile, "bw") as f:
+        f.write(buffer)
+    print("File written, reading it back")
+
+def readBinFile(binFile):
+    with open(binFile, "br") as f:
+        buffer = f.read()
+        print("Length of buffer is %d" % len(buffer))
+
+        for i in buffer:
+            print(int(i))
 
 
 
