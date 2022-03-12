@@ -1,4 +1,6 @@
 import fileinput
+from pathlib import Path
+
 import numpy
 from PIL import *
 from PIL import Image
@@ -15,7 +17,7 @@ def main():
     arr = PIL2np(img)
     print("---------")
     file = open("input.txt", "r+")
-    writeMatrixToFile(file, img, arr)
+    writeMatrixToFile(file, arr)
 
     print("compressionLevel1 :")
     print("---------")
@@ -60,18 +62,25 @@ def compressionLevel2(file,img):
     #convertMatrixToImage(newImgArr)
     #stringToArray2DForImg(14, 12, newImgArr)
     convertMatrixToImage(newImgArr, "restoredImage.png")
+    #-----------------------------------------------Level 3
 
 
+    diff_arr = difference(newImgArr)
+    print("difference pixels :", difference(newImgArr))
+    diff_file = open("Level3.txt", "r+")
+    data = Path("Level3.txt").read_text()
+    writeMatrixToFile(diff_file, diff_arr)
+    diff_encoding, diff_tree = Huffman.Huffman_Encoding(readFileToList("Level3.txt"))
+    print("Encoded output", diff_encoding)
+    diff_file.close()
 
-    diff_arr= difference(newImgArr)
-    print("difference pixels :" ,difference(newImgArr))
-
+    #--------------------------------------------
 
 def difference(arr):
-    nrow= len(arr)
-    ncolumn= len(arr[0])
+    nrow = len(arr)
+    ncolumn = len(arr[0])
 
-    darr= [[0]*ncolumn]*nrow
+    darr = [[0]*ncolumn]*nrow
     for i in range(nrow):
         for j in range(1,ncolumn):
             darr[i][j] = arr[i][j] - arr[i][j-1]
@@ -81,11 +90,16 @@ def difference(arr):
     diff_arr[0][0]= darr[0][0]-pivot
     for i in range (1,nrow):
         diff_arr[i][0] = darr[i][0] - darr[i-1][0]
-    diff_arr= np.matrix(diff_arr)
+    #diff_arr = np.matrix(diff_arr)
 
     return diff_arr
 
-
+def Array2D_To_Array1D(arr2D):
+    arr1D = []
+    for ind in range(0, len(arr2D)):
+        for ind2 in range(0, len(arr2D[0])):
+            arr1D.append(arr2D[ind][ind2])
+    return arr1D
 
 
 def convertMatrixToImage(arr, str):
@@ -115,7 +129,6 @@ def stringToArray2DForImg(h,w,str):
 
 def Array2DToText(file):
     file_data = np.loadtxt(file, dtype=int)
-    print(file_data)
 
     text = ""
     for val in range(0, 14):
@@ -175,12 +188,12 @@ def readFileTo2DArray(file):
     return file_data
 
 
-def writeMatrixToFile(file, img, arr):
+def writeMatrixToFile(file, arr):
     # input dosyasına data yazdırır.
-    for ind in range(0, img.size[1]):
+    for ind in range(0, len(arr)):
         if ind != 0:
             file.write("\n")
-        for ind2 in range(0, img.size[0]):
+        for ind2 in range(0, len(arr[0])):
             file.write(' ' + str(arr[ind][ind2]))
 
 
