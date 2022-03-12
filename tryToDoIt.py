@@ -16,8 +16,10 @@ def main():
     img = readPILimg()
     arr = PIL2np(img)
     print("---------")
-    file = open("input.txt", "r+")
-    writeMatrixToFile(file, arr)
+    with open("input.txt", "w+") as file:
+        pass
+    with open("input.txt", "r+") as file:
+        writeMatrixToFile(file, arr)
 
     print("compressionLevel1 :")
     print("---------")
@@ -43,11 +45,6 @@ def compressionLevel2(file, img):
     encoding, tree = Huffman.Huffman_Encoding(readFileToList(file))
     print("Encoded output", encoding)
 
-    node = tree.head
-    while node:
-        print(node.value())
-        node = node.next()
-
     # saves binary code in new file.
     with open("compressed_file.txt", "w+") as f:
         f.write(encoding)
@@ -64,6 +61,7 @@ def compressionLevel2(file, img):
     # stringToArray2DForImg(14, 12, newImgArr)
     convertMatrixToImage(newImgArr, "restoredImage.png")
     # -----------------------------------------------Level 3
+
 
     diff_arr = difference(newImgArr)
     print("difference pixels :", difference(newImgArr))

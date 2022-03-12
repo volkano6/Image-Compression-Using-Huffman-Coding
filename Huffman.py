@@ -1,7 +1,7 @@
 # A Huffman Tree Node
 import math
 import os
-import tryToDoIt
+
 
 
 class Node:
@@ -159,7 +159,7 @@ def Huffman_Decoding(encoded_data, huffman_tree):
             decoded_output.append(huffman_tree.symbol)
             huffman_tree = tree_head
 
-    string = ''.join([str(item) for item in decoded_output])
+    string = ' '.join([str(item) for item in decoded_output])
     return string
 
 
@@ -172,6 +172,5 @@ def compression():
     print("Decoded Output", Huffman_Decoding(encoding, tree))
     print(tree)
 
-compression()
 
 
