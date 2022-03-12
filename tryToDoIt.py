@@ -17,7 +17,7 @@ def main():
 
     #Level1("test.txt")
     #Level2("muhi.png")
-    Level3("muhi.png")
+    Level3("uncompressed_cat2.png")
     # gray_level_list = readFileToList("input.txt")
     #
     # array = ListToNpArray(gray_level_list)
@@ -101,7 +101,7 @@ def Level2(input_image):
     print("Decompressed file path: " + decom_path)
     print("Decoded Output", Huffman.Huffman_Decoding(encode_str, tree))
 
-    decompressed_arr= readFileTo2DArray("Level2_grayLevelImage_decompressed.txt")
+    decompressed_arr = readFileTo2DArray("Level2_grayLevelImage_decompressed.txt")
 
     convertMatrixToImage(decompressed_arr, "Level2_restoredImage.png")
 
@@ -138,17 +138,42 @@ def Level3(img):
     print(level3ImgNpArray)
     level3ImgArray = Array2DToList2D(level3ImgNpArray)
     diff_arr = difference(level3ImgArray)
+    diff_arr = np.array(diff_arr)
     print("difference pixels :", difference(level3ImgArray))
-    #
-    # with open("Level3_diff.txt", "w+") as diff_file:
-    #     writeMatrixToFile(diff_file, diff_arr)
-    # with open("Level3_diff.txt", "r+") as diff_file:
-    #     diff_encoding, diff_tree = Huffman.Huffman_Encoding(readFileToList("Level3_diff.txt"))
-    #     print("Encoded output", diff_encoding)
-    # os.remove("Level3_diff.txt")
-    #
 
 
+    # Dosya açar ve içine veri aktarır.
+    with open("Level3_diff.txt", "w+") as file:
+        pass
+    with open("Level3_diff.txt", "r+") as file:
+        writeMatrixToFile(file, diff_arr)
+
+    print("--------------------")
+    encoding, tree = Huffman.Huffman_Encoding(readFileToList("Level3_diff.txt"))
+
+    print("Encoded output", encoding)
+    with open("Level3_diff_encode.txt", "w+") as f:
+        f.write(encoding)
+
+    path = "Level3_diff.txt"
+    h = HuffmanCoding(path)
+
+    output_path = h.compress()
+    print("Compressed file path: " + output_path)
+
+    # text to str.
+    bin_file = open("Level3_diff_encode.txt", "r")
+    encode_str = bin_file.read()
+    bin_file.close()
+
+    decom_path = h.decompress(output_path)
+    print("Decompressed file path: " + decom_path)
+    print("Decoded Output", Huffman.Huffman_Decoding(encode_str, tree))
+
+    diff_array_new = readFileTo2DArray("Level3_diff_decompressed.txt")
+    print(diff_array_new)
+
+    convertMatrixToImage(diff_array_new, "Level3_restoredImage.png")
 
 
 
@@ -191,11 +216,11 @@ def Level3(img):
 
     # --------------------------------------------
 def Array2DToList2D(npArray):
-    list= list()
+    list_of_lists = list()
     for row in npArray:
-        list.append(row.tolist())
+        list_of_lists.append(row.tolist())
 
-    return list
+    return list_of_lists
 
 def difference(arr):
     # en boy
