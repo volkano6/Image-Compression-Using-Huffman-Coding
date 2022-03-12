@@ -1,6 +1,7 @@
 import fileinput
 from pathlib import Path
-
+from huffman2 import HuffmanCoding
+import sys
 import numpy
 from PIL import *
 from PIL import Image
@@ -15,16 +16,15 @@ import cv2
 def main():
     img = readPILimg("muhi.png")
     arr = PIL2np(img)
-    print("---------")
+
+    # Dosya açar ve içine veri aktarır.
     with open("input.txt", "w+") as file:
         pass
     with open("input.txt", "r+") as file:
         writeMatrixToFile(file, arr)
 
-    print("compressionLevel1 :")
-    print("---------")
     compression_Level1("test.txt")
-    decompression_Level1("Level1_compressed.txt")
+    decompression_Level1("test.txt")
     # gray_level_list = readFileToList("input.txt")
     #
     # array = ListToNpArray(gray_level_list)
@@ -38,23 +38,34 @@ def main():
     # new_img = np2PIL(im_out)
     # new_img.show()
 
+
 def compression_Level1(file):
-    inputFile = open("level1.txt", "r+")
-    data = inputFile.read()
+    with open(file, "r+") as f:
+        data = f.read()
     encoding, tree = Huffman.Huffman_Encoding(data)
     print("Encoded output", encoding)
-    with open("Level1_compressed.txt", "w+") as f:
+    with open("Level1_test.tt", "w+") as f:
         f.write(encoding)
 
-
+    path = file
+    h = HuffmanCoding(path)
+    output_path = h.compress()
+    print("Compressed file path: " + output_path)
+    return output_path
 
 def decompression_Level1(file):
-    print("Stord data : ", file.readline())
-    encoding = file.readline()
-    tree = list
-    print("Decoded Output", Huffman.Huffman_Decoding(encoding, tree))
+    # # encoding, tree = compression_Level1(file)
+    # with open(compressed_file, "r+") as f:
+    #     print("Stord data : ", f.readline())
+    # print("Decoded Output", Huffman.Huffman_Decoding(encoding, tree))
+    path = file
 
-    pass
+    h = HuffmanCoding(path)
+
+    output_path = h.compress()
+    decom_path = h.decompress(output_path)
+    print("Decompressed file path: " + decom_path)
+
 
 
 def compressionLevel2(file, img):
@@ -83,7 +94,6 @@ def compressionLevel2(file, img):
 
     level3Img = readPILimg("muhi.png")
 
-
     level3ImgArray = PIL2np(level3Img)
     print(level3ImgArray)
     level3_nrows = len(level3ImgArray)
@@ -110,10 +120,9 @@ def compressionLevel2(file, img):
     newDiffEncoding = level3_compressedFile.read()
     print("Decoded Output", Huffman.Huffman_Decoding(newDiffEncoding, diff_tree))
 
-    newlevel3ImgArray = strToArr2DWithSpace(Huffman.Huffman_Decoding(newDiffEncoding, diff_tree), level3_nrows, level3_ncols)
+    newlevel3ImgArray = strToArr2DWithSpace(Huffman.Huffman_Decoding(newDiffEncoding, diff_tree), level3_nrows,
+                                            level3_ncols)
     print(newlevel3ImgArray)
-
-
 
     # convertMatrixToImage(newImgArr)
     # stringToArray2DForImg(14, 12, newImgArr)
@@ -123,7 +132,7 @@ def compressionLevel2(file, img):
 
 
 def difference(arr):
-    #en boy
+    # en boy
     nrow = len(arr)
     ncolumn = len(arr[0])
 
@@ -142,9 +151,9 @@ def difference(arr):
 
     return diff_arr
 
+
 def redifference(diff_arr):
     pass
-
 
 
 def Array2D_To_Array1D(arr2D):
@@ -199,12 +208,11 @@ def Array2DToText(file):
 
 
 def saveBinFile(str):
-    # f = open("compressed_file.bin", "wb+")
-    # textToArray = np.array(list(str))
-    # arr = bytearray(textToArray)
-    # f.write(arr)
-    # f.close()
-    pass
+    f = open("compressed_file.bin", "wb+")
+    textToArray = np.array(list(str))
+    arr = bytearray(textToArray)
+    f.write(arr)
+    f.close()
 
 
 def readBinFile(binFile):
@@ -272,7 +280,7 @@ def readPILimg(image):
     img_gray = color2gray(img)
     print(img_gray)
     img_gray.show()
-    #img_gray.save("newImg", 'png')
+    # img_gray.save("newImg", 'png')
     # Return a resized copy of this img.
     # new_img = img.resize((256,256))
     # new_img.show()
