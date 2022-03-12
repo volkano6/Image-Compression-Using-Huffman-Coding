@@ -17,7 +17,8 @@ def main():
 
     #Level1("test.txt")
     #Level2("muhi.png")
-    Level3("uncompressed_cat2.png")
+    #Level3("uncompressed_cat2.png")
+    Level4("uncompressed_cat2.png")
     # gray_level_list = readFileToList("input.txt")
     #
     # array = ListToNpArray(gray_level_list)
@@ -174,10 +175,7 @@ def Level3(img):
     print(diff_array_new)
 
     convertMatrixToImage(diff_array_new, "Level3_restoredImage.png")
-
-
-
-#-------------------
+    #-------------------
     # level3Img = readPILimg("muhi.png")
     #
     # level3ImgArray = PIL2np(level3Img)
@@ -215,6 +213,26 @@ def Level3(img):
     # convertMatrixToImage(newlevel3ImgArray, "level3restoredImg.png")
 
     # --------------------------------------------
+
+def Level4(img):
+
+    img = cv2.imread(img)
+
+    blue, green, red = cv2.split(img)
+
+    zeros = numpy.zeros(blue.shape, numpy.uint8)
+
+    blueBGR = cv2.merge((blue, zeros, zeros))
+    greenBGR = cv2.merge((zeros, green, zeros))
+    redBGR = cv2.merge((zeros, zeros, red))
+
+    cv2.imshow('blue BGR', blueBGR)
+    cv2.imshow('green BGR', greenBGR)
+    cv2.imshow('red BGR', redBGR)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 def Array2DToList2D(npArray):
     list_of_lists = list()
     for row in npArray:
