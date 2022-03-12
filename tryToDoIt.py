@@ -129,7 +129,7 @@ def compressionLevel2(file, img):
     # convertMatrixToImage(newImgArr)
     # stringToArray2DForImg(14, 12, newImgArr)
     convertMatrixToImage(newImgArr, "restoredImage.png")
-    # -----------------------------------------------Level 3
+
 
 def Level3(img):
 
@@ -191,10 +191,11 @@ def Level3(img):
 
     # --------------------------------------------
 def Array2DToList2D(npArray):
-    list_of_lists = list()
+    list= list()
     for row in npArray:
-        list_of_lists.append(row.tolist())
-    return list_of_lists
+        list.append(row.tolist())
+
+    return list
 
 def difference(arr):
     # en boy
