@@ -14,17 +14,9 @@ import cv2
 
 
 def main():
-    img = readPILimg("muhi.png")
-    arr = PIL2np(img)
 
-    # Dosya açar ve içine veri aktarır.
-    with open("input.txt", "w+") as file:
-        pass
-    with open("input.txt", "r+") as file:
-        writeMatrixToFile(file, arr)
-
-    compression_Level1("test.txt")
-    decompression_Level1("test.txt")
+    #Level1("test.txt")
+    Level2("muhi.png")
     # gray_level_list = readFileToList("input.txt")
     #
     # array = ListToNpArray(gray_level_list)
@@ -39,34 +31,79 @@ def main():
     # new_img.show()
 
 
-def compression_Level1(file):
+def Level1(file):
+
+    path = file
+    h = HuffmanCoding(path)
+
     with open(file, "r+") as f:
         data = f.read()
     encoding, tree = Huffman.Huffman_Encoding(data)
     print("Encoded output", encoding)
-    with open("Level1_test.tt", "w+") as f:
+    with open("Level1_test.txt", "w+") as f:
         f.write(encoding)
 
-    path = file
-    h = HuffmanCoding(path)
     output_path = h.compress()
     print("Compressed file path: " + output_path)
-    return output_path
 
-def decompression_Level1(file):
-    # # encoding, tree = compression_Level1(file)
-    # with open(compressed_file, "r+") as f:
-    #     print("Stord data : ", f.readline())
-    # print("Decoded Output", Huffman.Huffman_Decoding(encoding, tree))
-    path = file
+    #text to str.
+    bin_file = open("Level1_test.txt", "r")
+    encode_str = bin_file.read()
+    bin_file.close()
 
-    h = HuffmanCoding(path)
-
-    output_path = h.compress()
     decom_path = h.decompress(output_path)
     print("Decompressed file path: " + decom_path)
+    print("Decoded Output", Huffman.Huffman_Decoding(encode_str, tree))
 
 
+def Level2(input_image):
+
+    img = readPILimg(input_image)
+    arr = PIL2np(img)
+
+    # Dosya açar ve içine veri aktarır.
+    with open("Level2_grayLevelImage.txt", "w+") as file:
+        pass
+    with open("Level2_grayLevelImage.txt", "r+") as file:
+        writeMatrixToFile(file, arr)
+        data = readFileTo2DArray(file)
+    encoding, tree = Huffman.Huffman_Encoding(data)
+    #
+    # print("Encoded output", encoding)
+    # with open("Level2_Image_Encode.txt", "w+") as f:
+    #     f.write(encoding)
+
+    #gray_level_2DArray = readFileTo2DArray("Level2_Image_Encode.txt")
+
+    # huffman_encoding = Huffman.Calculate_Codes(tree)
+    # huffman_BinaryEncoding = [len(huffman_encoding)][len(huffman_encoding[0])]
+    #
+    # for ind in range(len(gray_level_2DArray)):
+    #     for ind2 in range(len(gray_level_2DArray[0])):
+    #         huffman_BinaryEncoding[ind][ind2] = huffman_encoding.values(1)
+    # print(huffman_encoding)
+
+
+
+
+    # path = file
+    # h = HuffmanCoding(path)
+    #
+    #
+    #
+    #
+    # output_path = h.compress()
+    # print("Compressed file path: " + output_path)
+    #
+    # # text to str.
+    # bin_file = open("Level1_test.txt", "r")
+    # encode_str = bin_file.read()
+    # bin_file.close()
+    #
+    # decom_path = h.decompress(output_path)
+    # print("Decompressed file path: " + decom_path)
+    # print("Decoded Output", Huffman.Huffman_Decoding(encode_str, tree))
+    #
 
 def compressionLevel2(file, img):
     nrows = img.size[0]

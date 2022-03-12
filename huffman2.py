@@ -125,7 +125,7 @@ class HuffmanCoding:
 			b = self.get_byte_array(padded_encoded_text)
 			output.write(bytes(b))
 
-		print("Compressed")
+
 		return output_path
 
 
@@ -175,6 +175,6 @@ class HuffmanCoding:
 			
 			output.write(decompressed_text)
 
-		print("Decompressed")
+
 		return output_path
 
