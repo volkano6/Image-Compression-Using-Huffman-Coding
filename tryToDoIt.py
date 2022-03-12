@@ -21,7 +21,7 @@ def main():
 
     print("compressionLevel1 :")
     print("---------")
-    compressionLevel2("input.txt",img)
+    compressionLevel2("input.txt", img)
     # gray_level_list = readFileToList("input.txt")
     #
     # array = ListToNpArray(gray_level_list)
@@ -36,16 +36,17 @@ def main():
     # new_img.show()
 
 
-
-
-def compressionLevel2(file,img):
-
+def compressionLevel2(file, img):
     nrows = img.size[0]
     ncols = img.size[1]
 
-
     encoding, tree = Huffman.Huffman_Encoding(readFileToList(file))
     print("Encoded output", encoding)
+
+    node = tree.head
+    while node:
+        print(node.value())
+        node = node.next()
 
     # saves binary code in new file.
     with open("compressed_file.txt", "w+") as f:
@@ -56,43 +57,45 @@ def compressionLevel2(file,img):
     newEncoding = compressedFile.read()
     print("Decoded Output", Huffman.Huffman_Decoding(newEncoding, tree))
 
-    #yeni string decodeyi iki boyutlu araya atar.
+    # yeni string decodeyi iki boyutlu araya atar.
     newImgArr = strToArr2DWithSpace(Huffman.Huffman_Decoding(newEncoding, tree), nrows, ncols)
     print(newImgArr)
-    #convertMatrixToImage(newImgArr)
-    #stringToArray2DForImg(14, 12, newImgArr)
+    # convertMatrixToImage(newImgArr)
+    # stringToArray2DForImg(14, 12, newImgArr)
     convertMatrixToImage(newImgArr, "restoredImage.png")
-    #-----------------------------------------------Level 3
-
+    # -----------------------------------------------Level 3
 
     diff_arr = difference(newImgArr)
     print("difference pixels :", difference(newImgArr))
-    diff_file = open("Level3.txt", "r+")
-    data = Path("Level3.txt").read_text()
-    writeMatrixToFile(diff_file, diff_arr)
-    diff_encoding, diff_tree = Huffman.Huffman_Encoding(readFileToList("Level3.txt"))
-    print("Encoded output", diff_encoding)
-    diff_file.close()
 
-    #--------------------------------------------
+    with open("Level3.txt", "w+") as diff_file:
+        writeMatrixToFile(diff_file, diff_arr)
+    with open("Level3.txt", "r+") as diff_file:
+        diff_encoding, diff_tree = Huffman.Huffman_Encoding(readFileToList("Level3.txt"))
+        print("Encoded output", diff_encoding)
+    os.remove("Level3.txt")
+
+    # --------------------------------------------
+
 
 def difference(arr):
     nrow = len(arr)
     ncolumn = len(arr[0])
 
-    darr = [[0]*ncolumn]*nrow
+    darr = [[0] * ncolumn] * nrow
     for i in range(nrow):
-        for j in range(1,ncolumn):
-            darr[i][j] = arr[i][j] - arr[i][j-1]
+        for j in range(1, ncolumn):
+            darr[i][j] = arr[i][j] - arr[i][j - 1]
 
     diff_arr = darr
     pivot = darr[0][0]
-    diff_arr[0][0]= darr[0][0]-pivot
-    for i in range (1,nrow):
-        diff_arr[i][0] = darr[i][0] - darr[i-1][0]
-    #diff_arr = np.matrix(diff_arr)
+    diff_arr[0][0] = darr[0][0] - pivot
+    for i in range(1, nrow):
+        diff_arr[i][0] = darr[i][0] - darr[i - 1][0]
+    # diff_arr = np.matrix(diff_arr)
 
     return diff_arr
+
 
 def Array2D_To_Array1D(arr2D):
     arr1D = []
@@ -103,20 +106,26 @@ def Array2D_To_Array1D(arr2D):
 
 
 def convertMatrixToImage(arr, str):
-    #convert 2D array to image
-    cv2.imwrite(str,arr)
+    # convert 2D array to image
+    cv2.imwrite(str, arr)
 
 
-def strToArr2DWithSpace(str,row, colmn):
+def my_function(filepath):
+    data = open(filepath, "r+")
+
+
+def strToArr2DWithSpace(str, row, colmn):
     arr = np.fromstring(str, sep=" ", dtype=int)
     arr2D = np.reshape(arr, (colmn, row))
     return arr2D
+
 
 def ListToNpArray(list):
     arr = numpy.array(list)
     return arr
 
-def stringToArray2DForImg(h,w,str):
+
+def stringToArray2DForImg(h, w, str):
     arr2D = [w][h]
     arr1D = readFileTo1DArray(str)
     allPixels = 0
@@ -126,6 +135,7 @@ def stringToArray2DForImg(h,w,str):
                 arr2D[ind][ind2] = arr1D[allPixels]
                 allPixels += 1
     return print(arr2D)
+
 
 def Array2DToText(file):
     file_data = np.loadtxt(file, dtype=int)
@@ -154,7 +164,6 @@ def readBinFile(binFile):
 
         for i in buffer:
             print(int(i))
-
 
 
 def readFileTo1DArray(file):

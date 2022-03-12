@@ -159,7 +159,7 @@ def Huffman_Decoding(encoded_data, huffman_tree):
             decoded_output.append(huffman_tree.symbol)
             huffman_tree = tree_head
 
-    string = ' '.join([str(item) for item in decoded_output])
+    string = ''.join([str(item) for item in decoded_output])
     return string
 
 
@@ -170,8 +170,8 @@ def compression():
     encoding, tree = Huffman_Encoding(data)
     print("Encoded output", encoding)
     print("Decoded Output", Huffman_Decoding(encoding, tree))
+    print(tree)
 
-
-
+compression()
 
 
