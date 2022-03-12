@@ -170,7 +170,6 @@ def compression():
     encoding, tree = Huffman_Encoding(data)
     print("Encoded output", encoding)
     print("Decoded Output", Huffman_Decoding(encoding, tree))
-    print(tree)
 
 
 

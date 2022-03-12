@@ -13,7 +13,7 @@ import cv2
 
 
 def main():
-    img = readPILimg()
+    img = readPILimg("muhi.png")
     arr = PIL2np(img)
     print("---------")
     with open("input.txt", "w+") as file:
@@ -62,8 +62,12 @@ def compressionLevel2(file, img):
     convertMatrixToImage(newImgArr, "restoredImage.png")
     # -----------------------------------------------Level 3
 
+    level3Img = readPILimg("muhi.png")
+    level3ImgArray = PIL2np(level3Img)
+    print(level3ImgArray)
 
     diff_arr = difference(newImgArr)
+    print(diff_arr)
     print("difference pixels :", difference(newImgArr))
 
     with open("Level3.txt", "w+") as diff_file:
@@ -71,6 +75,7 @@ def compressionLevel2(file, img):
     with open("Level3.txt", "r+") as diff_file:
         diff_encoding, diff_tree = Huffman.Huffman_Encoding(readFileToList("Level3.txt"))
         print("Encoded output", diff_encoding)
+        print("Decoded Output", Huffman.Huffman_Decoding(diff_encoding, diff_tree))
     os.remove("Level3.txt")
 
     # --------------------------------------------
@@ -89,7 +94,7 @@ def difference(arr):
     pivot = darr[0][0]
     diff_arr[0][0] = darr[0][0] - pivot
     for i in range(1, nrow):
-        diff_arr[i][0] = darr[i][0] - darr[i - 1][0]
+        diff_arr[i][0] = int(darr[i][0]) - int(darr[i - 1][0])
     # diff_arr = np.matrix(diff_arr)
 
     return diff_arr
@@ -211,17 +216,16 @@ def readFile(fileName):
     return words
 
 
-def readPILimg():
+def readPILimg(image):
     # img dosyasının konumunu belirler.
-    img = Image.open("muhi.png")
+    img = Image.open(image)
     # dosyanın içeriğini gösterir.
     img.show()
     # look at the function.
     img_gray = color2gray(img)
     print(img_gray)
-    print("Photo 2:")
     img_gray.show()
-    img_gray.save("newImg", 'png')
+    #img_gray.save("newImg", 'png')
     # Return a resized copy of this img.
     # new_img = img.resize((256,256))
     # new_img.show()
