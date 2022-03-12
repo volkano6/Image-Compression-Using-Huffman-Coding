@@ -16,8 +16,8 @@ import cv2
 def main():
 
     #Level1("test.txt")
-    Level2("muhi.png")
-    #Level3("muhi.png")
+    #Level2("muhi.png")
+    Level3("muhi.png")
     # gray_level_list = readFileToList("input.txt")
     #
     # array = ListToNpArray(gray_level_list)
@@ -134,18 +134,17 @@ def compressionLevel2(file, img):
 def Level3(img):
 
     level3Img = readPILimg(img)
-
     level3ImgArray = PIL2np(level3Img)
     diff_arr = difference(level3ImgArray)
     print(diff_arr)
     print("difference pixels :", difference(level3ImgArray))
 
-
-
-
-
-
-
+    with open("Level3_diff.txt", "w+") as diff_file:
+        writeMatrixToFile(diff_file, diff_arr)
+    with open("Level3_diff.txt", "r+") as diff_file:
+        diff_encoding, diff_tree = Huffman.Huffman_Encoding(readFileToList("Level3_diff.txt"))
+        print("Encoded output", diff_encoding)
+    os.remove("Level3_diff.txt")
 
 
 
@@ -207,7 +206,7 @@ def difference(arr):
     pivot = darr[0][0]
     diff_arr[0][0] = darr[0][0] - pivot
     for i in range(1, nrow):
-        diff_arr[i][0] = int(darr[i][0]) - int(darr[i - 1][0])
+        diff_arr[i][0] = (darr[i][0]) - int(darr[i - 1][0])
     # diff_arr = np.matrix(diff_arr)
 
     return diff_arr
