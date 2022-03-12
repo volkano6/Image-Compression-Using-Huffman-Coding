@@ -116,8 +116,7 @@ def compressionLevel2(file, img):
     print("Encoded output", encoding)
 
     # saves binary code in new file.
-    with open("compressed_file.txt", "w+") as f:
-        f.write(encoding)
+
 
     # saves binary codes ftrom new file to huffman decodding.
     compressedFile = open("compressed_file.txt", "r+")
