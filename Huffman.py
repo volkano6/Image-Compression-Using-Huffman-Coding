@@ -82,7 +82,7 @@ def Huffman_Encoding(data):
         denominator += ind
 
     probabilities = []
-    for ind in range(1, len(counts)):
+    for ind in range(1, len(counts) + 1):
         probabilities.append(ind / denominator)
 
 
