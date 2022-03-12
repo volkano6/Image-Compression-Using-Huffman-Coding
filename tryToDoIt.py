@@ -134,18 +134,19 @@ def compressionLevel2(file, img):
 def Level3(img):
 
     level3Img = readPILimg(img)
-    level3ImgArray = PIL2np(level3Img)
+    level3ImgNpArray = PIL2np(level3Img)
+    print(level3ImgNpArray)
+    level3ImgArray = Array2DToList2D(level3ImgNpArray)
     diff_arr = difference(level3ImgArray)
-    print(diff_arr)
     print("difference pixels :", difference(level3ImgArray))
-
-    with open("Level3_diff.txt", "w+") as diff_file:
-        writeMatrixToFile(diff_file, diff_arr)
-    with open("Level3_diff.txt", "r+") as diff_file:
-        diff_encoding, diff_tree = Huffman.Huffman_Encoding(readFileToList("Level3_diff.txt"))
-        print("Encoded output", diff_encoding)
-    os.remove("Level3_diff.txt")
-
+    #
+    # with open("Level3_diff.txt", "w+") as diff_file:
+    #     writeMatrixToFile(diff_file, diff_arr)
+    # with open("Level3_diff.txt", "r+") as diff_file:
+    #     diff_encoding, diff_tree = Huffman.Huffman_Encoding(readFileToList("Level3_diff.txt"))
+    #     print("Encoded output", diff_encoding)
+    # os.remove("Level3_diff.txt")
+    #
 
 
 
@@ -189,14 +190,17 @@ def Level3(img):
     # convertMatrixToImage(newlevel3ImgArray, "level3restoredImg.png")
 
     # --------------------------------------------
-
+def Array2DToList2D(npArray):
+    list_of_lists = list()
+    for row in npArray:
+        list_of_lists.append(row.tolist())
+    return list_of_lists
 
 def difference(arr):
     # en boy
     nrow = len(arr)
     ncolumn = len(arr[0])
 
-    #
     darr = [[0] * ncolumn] * nrow
     for i in range(nrow):
         for j in range(1, ncolumn):
@@ -207,7 +211,7 @@ def difference(arr):
     diff_arr[0][0] = darr[0][0] - pivot
     for i in range(1, nrow):
         diff_arr[i][0] = (darr[i][0]) - int(darr[i - 1][0])
-    # diff_arr = np.matrix(diff_arr)
+    diff_arr = np.matrix(diff_arr)
 
     return diff_arr
 
@@ -256,12 +260,12 @@ def stringToArray2DForImg(h, w, str):
     return print(arr2D)
 
 
-def Array2DToText(file):
-    file_data = np.loadtxt(file, dtype=int)
+def Array2DToText(arr):
+    file_data = np.loadtxt(arr, dtype=int)
 
     text = ""
-    for val in range(0, 14):
-        for val2 in range(0, 12):
+    for val in range(0, len(arr)):
+        for val2 in range(0, len(arr[0])):
             text = text + ' ' + str(file_data[val][val2])
 
     return text
