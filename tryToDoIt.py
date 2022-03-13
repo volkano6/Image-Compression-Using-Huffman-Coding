@@ -16,9 +16,9 @@ import cv2
 def main():
 
     #Level1("test.txt")
-    #Level2("muhi.png")
+    Level2("muhi.png")
     #Level3("uncompressed_cat2.png")
-    Level4("uncompressed_cat2.png")
+    #Level4("uncompressed_cat2.png")
     # gray_level_list = readFileToList("input.txt")
     #
     # array = ListToNpArray(gray_level_list)
@@ -57,7 +57,6 @@ def Level1(file):
     print("Decompressed file path: " + decom_path)
     print("Decoded Output", Huffman.Huffman_Decoding(encode_str, tree))
 
-
 def Level2(input_image):
 
     img = readPILimg(input_image)
@@ -75,16 +74,20 @@ def Level2(input_image):
     print("Encoded output", encoding)
     with open("Level2_Image_Encode.txt", "w+") as f:
         f.write(encoding)
+        print(f.readline())
 
-    #gray_level_2DArray = readFileTo2DArray("Level2_Image_Encode.txt")
+    #bu arrayden değerler okunacak
+    gray_level_2DArray = arr
+    huffman_encoding = Huffman.Calculate_Codes(tree)
 
-    # huffman_encoding = Huffman.Calculate_Codes(tree)
-    # huffman_BinaryEncoding = [len(huffman_encoding)][len(huffman_encoding[0])]
-    #
-    # for ind in range(len(gray_level_2DArray)):
-    #     for ind2 in range(len(gray_level_2DArray[0])):
-    #         huffman_BinaryEncoding[ind][ind2] = huffman_encoding.values(1)
-    # print(huffman_encoding)
+    # bu arraye binary kodlar yazılacak
+    huffman_BinaryEncoding = []
+    for ind in range(len(gray_level_2DArray)):
+        col = []
+        for ind2 in range(len(gray_level_2DArray[0])):
+            col.append(str(huffman_encoding[gray_level_2DArray[ind][ind2]]))
+        huffman_BinaryEncoding.append(col)
+    huffman_BinaryEncoding_NParray = ListToNpArray(huffman_BinaryEncoding)
 
 
     path = "Level2_grayLevelImage.txt"
@@ -93,6 +96,7 @@ def Level2(input_image):
     output_path = h.compress()
     print("Compressed file path: " + output_path)
 
+    print("------------------------------------------------")
     # text to str.
     bin_file = open("Level2_Image_Encode.txt", "r")
     encode_str = bin_file.read()
@@ -104,32 +108,8 @@ def Level2(input_image):
 
     decompressed_arr = readFileTo2DArray("Level2_grayLevelImage_decompressed.txt")
 
+
     convertMatrixToImage(decompressed_arr, "Level2_restoredImage.png")
-
-
-
-
-def compressionLevel2(file, img):
-    nrows = img.size[0]
-    ncols = img.size[1]
-
-    encoding, tree = Huffman.Huffman_Encoding(readFileToList(file))
-    print("Encoded output", encoding)
-
-    # saves binary code in new file.
-
-
-    # saves binary codes ftrom new file to huffman decodding.
-    compressedFile = open("compressed_file.txt", "r+")
-    newEncoding = compressedFile.read()
-    print("Decoded Output", Huffman.Huffman_Decoding(newEncoding, tree))
-
-    # yeni string decodeyi iki boyutlu araya atar.
-    newImgArr = strToArr2DWithSpace(Huffman.Huffman_Decoding(newEncoding, tree), nrows, ncols)
-    print(newImgArr)
-    # convertMatrixToImage(newImgArr)
-    # stringToArray2DForImg(14, 12, newImgArr)
-    convertMatrixToImage(newImgArr, "restoredImage.png")
 
 
 def Level3(img):
@@ -226,12 +206,10 @@ def Level4(img):
     greenBGR = cv2.merge((zeros, green, zeros))
     redBGR = cv2.merge((zeros, zeros, red))
 
-    cv2.imshow('blue BGR', blueBGR)
-    cv2.imshow('green BGR', greenBGR)
-    cv2.imshow('red BGR', redBGR)
+    cv2.imwrite("blue.png", blueBGR)
+    cv2.imwrite("green.png", greenBGR)
+    cv2.imwrite("red.png", redBGR)
 
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
 
 def Array2DToList2D(npArray):
     list_of_lists = list()
@@ -239,6 +217,7 @@ def Array2DToList2D(npArray):
         list_of_lists.append(row.tolist())
 
     return list_of_lists
+
 
 def difference(arr):
     # en boy
@@ -336,7 +315,7 @@ def readFileTo1DArray(file):
     file_data = np.loadtxt(file, dtype=int)
     return file_data
 
-
+#boşluklu txt yi listeye çevirir.
 def readFileToList(file):
     # opening the file in read mode
     my_file = open(file, "r")
