@@ -306,9 +306,10 @@ def Array2D_To_Array1D(arr2D):
     return arr1D
 
 
-def convertMatrixToImage(arr, str):
-    # convert 2D array to image
-    cv2.imwrite(str, arr)
+def convertMatrixToImage(arr, file_name):
+    array = np2PIL(arr)
+    array.save(file_name + '.png')
+
 
 
 def my_function(filepath):
