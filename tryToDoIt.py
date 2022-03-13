@@ -14,10 +14,25 @@ import cv2
 
 
 def main():
+
+    # img = readPILimg("muhi.png")
+    # arr = PIL2np(img)
+
+    # Dosya açar ve içine veri aktarır.
+    # with open("Level2_grayLevelImage.txt", "w+") as file:
+    #     pass
+    # with open("Level2_grayLevelImage.txt", "r+") as file:
+    #     writeMatrixToFile(file, arr)
+
+    # array =readFileTo2DArray("Level2_grayLevelImage.txt")
+    # array2 = readFileTo2DArray("blue_diff_encode.txt")
+    # print(difference(array))
+    # print(difference(array2))
     # Level1("test.txt")
     #Level2("muhi.png", "muhi2.txt", "Level2_restoredImage.png")
-    # Level3("uncompressed_cat2.png")
-     Level4("muhi.png")
+    #Level3("muhi.png", "test_encode.txt", "restored_image.png")
+    # Level4("muhi.png")
+    Level5("muhi.png")
     # gray_level_list = readFileToList("input.txt")
     #
     # array = ListToNpArray(gray_level_list)
@@ -107,14 +122,15 @@ def Level2(input_image, Level2_Image_Encode, Level2_restoredImage):
     convertMatrixToImage(decompressed_arr, Level2_restoredImage)
 
 
-def Level3(img):
+def Level3(img, Level3_diff_encode, Level3_restoredImage):
     level3Img = readPILimg(img)
     level3ImgNpArray = PIL2np(level3Img)
     print(level3ImgNpArray)
+
     level3ImgArray = Array2DToList2D(level3ImgNpArray)
     diff_arr = difference(level3ImgArray)
     diff_arr = np.array(diff_arr)
-    print("difference pixels :", difference(level3ImgArray))
+    print("difference pixels :", difference(diff_arr))
 
     # Dosya açar ve içine veri aktarır.
     with open("Level3_diff.txt", "w+") as file:
@@ -126,7 +142,7 @@ def Level3(img):
     encoding, tree = Huffman.Huffman_Encoding(readFileToList("Level3_diff.txt"))
 
     print("Encoded output", encoding)
-    with open("Level3_diff_encode.txt", "w+") as f:
+    with open(Level3_diff_encode, "w+") as f:
         f.write(encoding)
 
     path = "Level3_diff.txt"
@@ -136,7 +152,7 @@ def Level3(img):
     print("Compressed file path: " + output_path)
 
     # text to str.
-    bin_file = open("Level3_diff_encode.txt", "r")
+    bin_file = open(Level3_diff_encode, "r")
     encode_str = bin_file.read()
     bin_file.close()
 
@@ -147,7 +163,7 @@ def Level3(img):
     diff_array_new = readFileTo2DArray("Level3_diff_decompressed.txt")
     print(diff_array_new)
 
-    convertMatrixToImage(diff_array_new, "Level3_restoredImage.png")
+    convertMatrixToImage(diff_array_new, Level3_restoredImage)
     # -------------------
     # level3Img = readPILimg("muhi.png")
     #
@@ -189,19 +205,8 @@ def Level3(img):
 
 
 def Level4(img):
-    img = cv2.imread(img)
 
-    blue, green, red = cv2.split(img)
-
-    zeros = numpy.zeros(blue.shape, numpy.uint8)
-
-    blueBGR = cv2.merge((blue, zeros, zeros))
-    greenBGR = cv2.merge((zeros, green, zeros))
-    redBGR = cv2.merge((zeros, zeros, red))
-
-    cv2.imwrite("blue.png", blueBGR)
-    cv2.imwrite("green.png", greenBGR)
-    cv2.imwrite("red.png", redBGR)
+    RGB_comp(img)
 
     print(" ")
     print(" ")
@@ -222,6 +227,45 @@ def Level4(img):
     Level2(input_image="red.png", Level2_Image_Encode="red_Image_encode.txt", Level2_restoredImage="red_restored_Image.png")
 
 
+def Level5(img):
+
+    RGB_comp(img)
+
+    print("For Blue Img:")
+    Level3(img="blue.png", Level3_diff_encode="blue_diff_encode.txt",
+           Level3_restoredImage="blue_restored_DiffImage.png")
+
+    print(" ")
+    print(" ")
+
+    print("For Green Img:")
+    Level3(img="green.png", Level3_diff_encode="green_diff_encode.txt",
+           Level3_restoredImage="green_restored_DiffImage.png")
+
+    print(" ")
+    print(" ")
+
+    print("For Red Img:")
+    Level3(img="red.png", Level3_diff_encode="red_diff_encode.txt",
+           Level3_restoredImage="red_restored_DiffImage.png")
+
+
+def RGB_comp(image):
+
+    img = cv2.imread(image)
+
+    blue, green, red = cv2.split(img)
+
+    zeros = numpy.zeros(blue.shape, numpy.uint8)
+
+    blueBGR = cv2.merge((blue, zeros, zeros))
+    greenBGR = cv2.merge((zeros, green, zeros))
+    redBGR = cv2.merge((zeros, zeros, red))
+
+    cv2.imwrite("blue.png", blueBGR)
+    cv2.imwrite("green.png", greenBGR)
+    cv2.imwrite("red.png", redBGR)
+
 def Array2DToList2D(npArray):
     list_of_lists = list()
     for row in npArray:
@@ -235,12 +279,12 @@ def difference(arr):
     nrow = len(arr)
     ncolumn = len(arr[0])
 
-    darr = [[0] * ncolumn] * nrow
+    darr = numpy.array(arr, copy=True)
     for i in range(nrow):
         for j in range(1, ncolumn):
             darr[i][j] = arr[i][j] - arr[i][j - 1]
 
-    diff_arr = darr
+    diff_arr = numpy.array(darr, copy=True)
     pivot = darr[0][0]
     diff_arr[0][0] = darr[0][0] - pivot
     for i in range(1, nrow):
