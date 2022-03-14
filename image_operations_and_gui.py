@@ -20,23 +20,27 @@ def start():
     # set the title of the window
     gui.title('Image Operations')
     # set the background color of the window
-    gui['bg'] = 'SeaGreen1'
+    gui['bg'] = 'SeaGreen'
     # create and place a frame on the window with some padding for all four sides
     frame = tk.Frame(gui)
     # using the grid method for layout management
-    frame.grid(row=0, column=0, padx=15, pady=15)
+    frame.grid(row=0, column=0, padx=7, pady=7)
     # set the background color of the frame
     frame['bg'] = 'DodgerBlue4'
     # read and display the default image which is a thumbs up emoji
     gui_img = ImageTk.PhotoImage(file=image_file_path)
+    gui_img2 = ImageTk.PhotoImage(file="muhi.png")
+
     gui_img_panel = tk.Label(frame, image=gui_img)
+    gui_img_panel2 = tk.Label(frame, image=gui_img2)
     # columnspan = 5 -> 5 columns as there are 5 buttons
-    gui_img_panel.grid(row=0, column=0, columnspan=5, padx=10, pady=10)
+    gui_img_panel.grid(row=0, column=0, columnspan=5, padx=50, pady=50)
+    gui_img_panel2.grid(row=0, column=10, columnspan=5, padx=50, pady=50)
     # create and place five buttons below the image (button commands are expressed
     # as lambda functions for enabling input arguments)
     # ----------------------------------------------------------------------------
     # the first button enables the user to open and view an image from a file
-    btn1 = tk.Button(frame, text='Open Image', width=10)
+    btn1 = tk.Button(frame, text='Open Image', width=20)
     btn1['command'] = lambda: open_image(gui_img_panel)
     btn1.grid(row=1, column=0)
     # create and place the second button that shows the image in grayscale
