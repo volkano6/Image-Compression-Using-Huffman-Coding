@@ -4,17 +4,27 @@ from huffman2 import HuffmanCoding
 import sys
 import numpy
 from PIL import *
-from PIL import Image
+from PIL import Image, ImageTk
 import numpy as np
 import os
 from numpy import ndarray
 import Huffman
 import math
+from skimage.metrics import structural_similarity as ssim
+import matplotlib.pyplot as plt
 import cv2
+from scipy import misc
+from matplotlib import cm
+
 
 
 def main():
 
+    # img = readPILimg("red.png")
+    # arr = PIL2np(img)
+    # print(arr)
+
+    #RGB_comp("muhi.png")
     # img = readPILimg("muhi.png")
     # arr = PIL2np(img)
 
@@ -29,10 +39,11 @@ def main():
     # print(difference(array))
     # print(difference(array2))
     # Level1("test.txt")
-    #Level2("muhi.png", "muhi2.txt", "Level2_restoredImage.png")
-    #Level3("muhi.png", "test_encode.txt", "restored_image.png")
-    # Level4("muhi.png")
-    Level5("muhi.png")
+    #Level2("uncompressed_cat2.png", "muhi2.txt", "Level2_restoredImage.png")
+    Level3("uncompressed_cat2.png", "test_encode.txt", "restored_image.png")
+    #Level4("uncompressed_cat2.png")
+    #Level5("muhi.png")
+    #print(comparison("muhi.png","restored_image.png"))
     # gray_level_list = readFileToList("input.txt")
     #
     # array = ListToNpArray(gray_level_list)
@@ -206,7 +217,9 @@ def Level3(img, Level3_diff_encode, Level3_restoredImage):
 
 def Level4(img):
 
-    RGB_comp(img)
+    RGB_comp(img, 'blue', "blue.png")
+    RGB_comp(img, 'green', "green.png")
+    RGB_comp(img, "red", "red.png")
 
     print(" ")
     print(" ")
@@ -229,7 +242,9 @@ def Level4(img):
 
 def Level5(img):
 
-    RGB_comp(img)
+    RGB_comp(img, 'blue', "blue.png")
+    RGB_comp(img, 'green', "green.png")
+    RGB_comp(img, "red", "red.png")
 
     print("For Blue Img:")
     Level3(img="blue.png", Level3_diff_encode="blue_diff_encode.txt",
@@ -250,21 +265,46 @@ def Level5(img):
            Level3_restoredImage="red_restored_DiffImage.png")
 
 
-def RGB_comp(image):
 
-    img = cv2.imread(image)
 
-    blue, green, red = cv2.split(img)
 
-    zeros = numpy.zeros(blue.shape, numpy.uint8)
+# for row in range(n_rows):
+    #     for col in range(n_cols):
+    #         # make all the values 0 for the color channels except the given channel
+    #         for rgb in range(3):
+    #             if (rgb != channel_index):
+    #                 image_array[row][col][rgb] = 0
+    # # convert the modified image array (numpy) to a PIL image
+    # pil_img = convertMatrixToImage(image_array)
+    # # modify the displayed image
+    # img = ImageTk.PhotoImage(image=pil_img)
+    # image_panel.config(image=img)
+    # image_panel.photo_ref = img
+    # red_pixels = np.reshape(r_pixels, (width, height))
+    # print(red_pixels)
+    #     green_pixels = np.reshape(orig_g, (width, height))
+    #     blue_pixels = np.reshape(orig_b, (width, height))
+    #
+    #d
+    # red_image = Image.fromarray(np.uint8(cm.gist_earth(red_pixels) * 255))
+    #onvertMatrixToImage(red_pixels,"red_photonolur.png")
 
-    blueBGR = cv2.merge((blue, zeros, zeros))
-    greenBGR = cv2.merge((zeros, green, zeros))
-    redBGR = cv2.merge((zeros, zeros, red))
 
-    cv2.imwrite("blue.png", blueBGR)
-    cv2.imwrite("green.png", greenBGR)
-    cv2.imwrite("red.png", redBGR)
+    # img = cv2.imread(image)
+    #
+    # blue, green, red = cv2.split(img)
+    #
+    # zeros = numpy.zeros(blue.shape, numpy.uint8)
+    #
+    # blueBGR = cv2.merge((blue, zeros, zeros))
+    # greenBGR = cv2.merge((zeros, green, zeros))
+    # redBGR = cv2.merge((zeros, zeros, red))
+    #
+    # cv2.imwrite("blue.png", blueBGR)
+    # cv2.imwrite("green.png", greenBGR)
+    # cv2.imwrite("red.png", redBGR)
+
+
 
 def Array2DToList2D(npArray):
     list_of_lists = list()
@@ -306,10 +346,15 @@ def Array2D_To_Array1D(arr2D):
     return arr1D
 
 
-def convertMatrixToImage(arr, file_name):
+def convertMatrixToImage(arr, str):
+    # convert 2D array to image
     array = np2PIL(arr)
-    array.save(file_name + '.png')
+    array.save(str)
 
+
+def pil_to_np(img):
+   img_array = np.array(img)
+   return img_array
 
 
 def my_function(filepath):
@@ -408,6 +453,19 @@ def writeMatrixToFile(file, arr):
             file.write(' ' + str(arr[ind][ind2]))
 
 
+# def mse(orig_img, restored_img):
+#     # the 'Mean Squared Error' between the two images is the
+#     # sum of the squared difference between the two images;
+#     # NOTE: the two images must have the same dimension
+#     err = np.sum((orig_img.astype("float") - restored_img.astype("float")) ** 2)
+#     err /= float(orig_img.shape[0] * restored_img.shape[1])
+#
+#        # return the MSE, the lower the error, the more "similar"
+#     # the two images are
+#     return err
+
+
+
 def readFile(fileName):
     fileObj = open("input.txt", "r")  # opens the file in read mode
     words = fileObj.read().splitlines()  # puts the file into an array
@@ -485,6 +543,34 @@ def threshold(im, T, LOW, HIGH):
                 im[i][j] = HIGH
     return im
 
+def RGB_comp(image_file_path, channel,str):
+   # red channel -> 0, green channel -> 1 and blue channel -> 2
+   if channel == 'red':
+      channel_index = 0
+   elif channel == 'green':
+      channel_index = 1
+   else:
+      channel_index = 2
+   # open the current image as a PIL image
+   img_rgb = Image.open(image_file_path)
+   # convert the current image to a numpy array
+   image_array = pil_to_np(img_rgb)
+   # traverse all the pixels in the image array
+   n_rows = image_array.shape[0]
+   n_cols = image_array.shape[1]
+   for row in range(n_rows):
+      for col in range(n_cols):
+         # make all the values 0 for the color channels except the given channel
+         for rgb in range(3):
+            if (rgb != channel_index):
+               image_array[row][col][rgb] = 0
+   # convert the modified image array (numpy) to a PIL image
+   pil_img = np_to_pil(image_array)
+   pil_img.save(str)
 
+
+def np_to_pil(img_array):
+   img = Image.fromarray(np.uint8(img_array))
+   return img
 if __name__ == '__main__':
     main()
