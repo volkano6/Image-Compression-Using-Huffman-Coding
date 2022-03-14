@@ -10,23 +10,27 @@ import os
 from numpy import ndarray
 import Huffman
 import math
-from skimage.metrics import structural_similarity as ssim
-import matplotlib.pyplot as plt
-import cv2
-from scipy import misc
-from matplotlib import cm
+
 
 
 
 def main():
-
-    # img = readPILimg("red.png")
-    # arr = PIL2np(img)
-    # print(arr)
-
-    #RGB_comp("muhi.png")
-    # img = readPILimg("muhi.png")
-    # arr = PIL2np(img)
+    #
+    # # img = readPILimg("red.png")
+    # # arr = PIL2np(img)
+    # # print(arr)
+    # arr = [[21,21,21,95,169,243,243,243],
+    #        [21,21,21,95,169,243,243,243],
+    #        [25,0,21,95,169,243,243,243],
+    #        [21,21,21,95,169,243,243,23]]
+    #
+    # Darr_arr = difference(arr)
+    # print(Darr_arr)
+    # print(len(Darr_arr[0]))
+    # print(reDifference(Darr_arr))
+    # #RGB_comp("muhi.png")
+    # # img = readPILimg("muhi.png")
+    # # arr = PIL2np(img)
 
     # Dosya açar ve içine veri aktarır.
     # with open("Level2_grayLevelImage.txt", "w+") as file:
@@ -38,9 +42,9 @@ def main():
     # array2 = readFileTo2DArray("blue_diff_encode.txt")
     # print(difference(array))
     # print(difference(array2))
-    # Level1("test.txt")
-    #Level2("uncompressed_cat2.png", "muhi2.txt", "Level2_restoredImage.png")
-    Level3("uncompressed_cat2.png", "test_encode.txt", "restored_image.png")
+     #Level1("input.txt")
+    Level2("muhi.png", "muhi2.txt", "Level2_restoredImage.png")
+    # Level3("muhi.png", "test_encode.txt", "restored_image.png")
     #Level4("uncompressed_cat2.png")
     #Level5("muhi.png")
     #print(comparison("muhi.png","restored_image.png"))
@@ -64,6 +68,7 @@ def Level1(file):
 
     with open(file, "r+") as f:
         data = f.read()
+
     encoding, tree = Huffman.Huffman_Encoding(data)
     print("Encoded output", encoding)
     with open("Level1_test.txt", "w+") as f:
@@ -79,7 +84,8 @@ def Level1(file):
 
     decom_path = h.decompress(output_path)
     print("Decompressed file path: " + decom_path)
-    print("Decoded Output", Huffman.Huffman_Decoding(encode_str, tree))
+    decodedOutput = Huffman.Huffman_Decoding(encode_str, tree)
+    print("Decoded Output", decodedOutput.replace(" ", ""))
 
 
 def Level2(input_image, Level2_Image_Encode, Level2_restoredImage):
@@ -121,16 +127,24 @@ def Level2(input_image, Level2_Image_Encode, Level2_restoredImage):
 
     decom_path = h.decompress(output_path)
     print("Decompressed file path: " + decom_path)
-
+    bin_Array_fromDecompressfile = readFileTo2DArray(decom_path, str)
+    binfileRow = (len(bin_Array_fromDecompressfile))
+    binfileColmn = (len(bin_Array_fromDecompressfile[0]))
     # text to str.
-    bin_file = open(decom_path, "r")
+    bin_file = open(decom_path)
     encode_str = bin_file.read()
     bin_file.close()
 
-    print("Decoded Output", Huffman.Huffman_Decoding(encode_str, tree))
-    decompressed_arr = readFileTo2DArray("Level2_grayLevelImage.txt")
+    decom_path = np.array(decom_path, copy=True)
 
-    convertMatrixToImage(decompressed_arr, Level2_restoredImage)
+    print("Decoded Output", Huffman.Huffman_Decoding(encode_str, tree))
+    decode_str= Huffman.Huffman_Decoding(encode_str, tree)
+
+    decode_arr = np.fromstring(decode_str, dtype=int, sep=' ')
+    decode_array = decode_arr.reshape(binfileRow,binfileColmn)
+    print(decode_array)
+
+    convertMatrixToImage(decode_array, Level2_restoredImage)
 
 
 def Level3(img, Level3_diff_encode, Level3_restoredImage):
@@ -265,47 +279,6 @@ def Level5(img):
            Level3_restoredImage="red_restored_DiffImage.png")
 
 
-
-
-
-# for row in range(n_rows):
-    #     for col in range(n_cols):
-    #         # make all the values 0 for the color channels except the given channel
-    #         for rgb in range(3):
-    #             if (rgb != channel_index):
-    #                 image_array[row][col][rgb] = 0
-    # # convert the modified image array (numpy) to a PIL image
-    # pil_img = convertMatrixToImage(image_array)
-    # # modify the displayed image
-    # img = ImageTk.PhotoImage(image=pil_img)
-    # image_panel.config(image=img)
-    # image_panel.photo_ref = img
-    # red_pixels = np.reshape(r_pixels, (width, height))
-    # print(red_pixels)
-    #     green_pixels = np.reshape(orig_g, (width, height))
-    #     blue_pixels = np.reshape(orig_b, (width, height))
-    #
-    #d
-    # red_image = Image.fromarray(np.uint8(cm.gist_earth(red_pixels) * 255))
-    #onvertMatrixToImage(red_pixels,"red_photonolur.png")
-
-
-    # img = cv2.imread(image)
-    #
-    # blue, green, red = cv2.split(img)
-    #
-    # zeros = numpy.zeros(blue.shape, numpy.uint8)
-    #
-    # blueBGR = cv2.merge((blue, zeros, zeros))
-    # greenBGR = cv2.merge((zeros, green, zeros))
-    # redBGR = cv2.merge((zeros, zeros, red))
-    #
-    # cv2.imwrite("blue.png", blueBGR)
-    # cv2.imwrite("green.png", greenBGR)
-    # cv2.imwrite("red.png", redBGR)
-
-
-
 def Array2DToList2D(npArray):
     list_of_lists = list()
     for row in npArray:
@@ -318,24 +291,53 @@ def difference(arr):
     # en boy
     nrow = len(arr)
     ncolumn = len(arr[0])
+    print(ncolumn)
 
     darr = numpy.array(arr, copy=True)
     for i in range(nrow):
         for j in range(1, ncolumn):
             darr[i][j] = arr[i][j] - arr[i][j - 1]
 
+    pivot_arr= []
     diff_arr = numpy.array(darr, copy=True)
+    for i in range(nrow):
+        pivot_arr.append(darr[i][0])
     pivot = darr[0][0]
     diff_arr[0][0] = darr[0][0] - pivot
     for i in range(1, nrow):
         diff_arr[i][0] = (darr[i][0]) - int(darr[i - 1][0])
-    diff_arr = np.matrix(diff_arr)
+
+    with open("pivot.txt", "w+") as f:
+
+        writeArrToFile(f, pivot_arr)
 
     return diff_arr
 
 
-def redifference(diff_arr):
-    pass
+def reDifference(diff_arr):
+
+    nrow = len(diff_arr)
+    ncolumn = len(diff_arr[0])
+    pivot = []
+
+    with open("pivot.txt", "r+") as f:
+        str_arr = ','.join([l.strip() for l in f])
+
+    piv_arr = np.asarray(str_arr.split(' '), dtype=int)
+
+    darr = np.array(diff_arr, copy=True)
+
+    for i in range(0, nrow):
+        darr[i][0] = piv_arr[i]
+    print()
+    arr = np.array(darr, copy=True)
+
+
+    for ind in range(nrow):
+        for j in range(1, ncolumn):
+            arr[ind][j] = darr[ind][j] + arr[ind][j-1]
+
+    return arr
 
 
 def Array2D_To_Array1D(arr2D):
@@ -372,7 +374,7 @@ def ListToNpArray(list):
     return arr
 
 
-def stringToArray2DForImg(h, w, str):
+def stringToArray2DForImg(w, h, str):
     arr2D = [w][h]
     arr1D = readFileTo1DArray(str)
     allPixels = 0
@@ -381,7 +383,7 @@ def stringToArray2DForImg(h, w, str):
             for ind2 in range(0, w):
                 arr2D[ind][ind2] = arr1D[allPixels]
                 allPixels += 1
-    return print(arr2D)
+    return arr2D
 
 
 def Array2DToText(arr):
@@ -439,9 +441,17 @@ def calculate_entropy(arr):
     return entropyVal * (-1)
 
 
-def readFileTo2DArray(file):
-    file_data = np.loadtxt(file, dtype=int)
+def readFileTo2DArray(file, type):
+    if type == int:
+        file_data = np.loadtxt(file, dtype=type)
+    else:
+        file_data = np.loadtxt(file, dtype=str)
     return file_data
+
+def writeArrToFile(file, arr):
+    # input dosyasına data yazdırır.
+    for ind in range(0, len(arr)):
+        file.write(' ' + str(arr[ind]))
 
 
 def writeMatrixToFile(file, arr):
@@ -451,19 +461,6 @@ def writeMatrixToFile(file, arr):
             file.write("\n")
         for ind2 in range(0, len(arr[0])):
             file.write(' ' + str(arr[ind][ind2]))
-
-
-# def mse(orig_img, restored_img):
-#     # the 'Mean Squared Error' between the two images is the
-#     # sum of the squared difference between the two images;
-#     # NOTE: the two images must have the same dimension
-#     err = np.sum((orig_img.astype("float") - restored_img.astype("float")) ** 2)
-#     err /= float(orig_img.shape[0] * restored_img.shape[1])
-#
-#        # return the MSE, the lower the error, the more "similar"
-#     # the two images are
-#     return err
-
 
 
 def readFile(fileName):
@@ -543,6 +540,7 @@ def threshold(im, T, LOW, HIGH):
                 im[i][j] = HIGH
     return im
 
+
 def RGB_comp(image_file_path, channel,str):
    # red channel -> 0, green channel -> 1 and blue channel -> 2
    if channel == 'red':
@@ -572,5 +570,10 @@ def RGB_comp(image_file_path, channel,str):
 def np_to_pil(img_array):
    img = Image.fromarray(np.uint8(img_array))
    return img
+
+def open_ready_file(file):
+    f = open(file, "w+")
+    f = open(file, "r+")
+
 if __name__ == '__main__':
     main()
