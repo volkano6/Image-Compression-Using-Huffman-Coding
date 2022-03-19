@@ -1,5 +1,4 @@
 
-
 from huffman2 import HuffmanCoding
 import sys
 import numpy
@@ -33,21 +32,22 @@ def main():
     # # arr = PIL2np(img)
 
     # Dosya açar ve içine veri aktarır.
-    # with open("Level2_grayLevelImage.txt", "w+") as file:
+    # with open("gry_ımg.txt", "w+") as file:
     #     pass
-    # with open("Level2_grayLevelImage.txt", "r+") as file:
+    # with open("gry_ımg.txt", "r+") as file:
     #     writeMatrixToFile(file, arr)
 
-    # array =readFileTo2DArray("Level2_grayLevelImage.txt")
+    # array =readFileTo2DArray("gry_ımg.txt")
     # array2 = readFileTo2DArray("blue_diff_encode.txt")
     # print(difference(array))
     # print(difference(array2))
-     #Level1("input.txt")
-    #Level2("muhi.png", "muhi2.txt", "Level2_restoredImage.png")
-     Level3("muhi.png", "test_encode.txt", "restored_image.png")
-    #Level4("uncompressed_cat2.png")
-    #Level5("muhi.png")
-    #print(comparison("muhi.png","restored_image.png"))
+     #Level1_HuffmanEncodingAndDecoding("input.txt")
+    #Level2_ImageCompressionGrayLevel("uncompressed_cat2.png", "muhi2.txt", "Level2_restoredImage.png")
+    #Level3_ImageCompressionGrayLeveldifferences("uncompressed_cat.png", "test_encode.txt", "restored_image.png")
+    #Level4ImageCompression("uncompressed_cat2.png")
+    Level5ImageCompressionColordifferences("uncompressed_cat2.png")
+    # Level5("muhi.png")
+    # print(comparison("muhi.png","restored_image.png"))
     # gray_level_list = readFileToList("input.txt")
     #
     # array = ListToNpArray(gray_level_list)
@@ -62,14 +62,14 @@ def main():
     # new_img.show()
 
 
-def Level1(file):
+def Level1_HuffmanEncodingAndDecoding(file):
     path = file
     h = HuffmanCoding(path)
 
     with open(file, "r+") as f:
-        data = f.read()
+        file_data = f.read()
 
-    encoding, tree = Huffman.Huffman_Encoding(data)
+    encoding, tree = Huffman.Huffman_Encoding(file_data)
     print("Encoded output", encoding)
     with open("Level1_test.txt", "w+") as f:
         f.write(encoding)
@@ -78,9 +78,9 @@ def Level1(file):
     print("Compressed file path: " + output_path)
 
     # text to str.
-    bin_file = open("Level1_test.txt", "r")
-    encode_str = bin_file.read()
-    bin_file.close()
+    fileBinary = open("Level1_test.txt", "r")
+    encode_str = fileBinary.read()
+    fileBinary.close()
 
     decom_path = h.decompress(output_path)
     print("Decompressed file path: " + decom_path)
@@ -88,180 +88,133 @@ def Level1(file):
     print("Decoded Output", decodedOutput.replace(" ", ""))
 
 
-def Level2(input_image, Level2_Image_Encode, Level2_restoredImage):
-    img = readPILimg(input_image)
+def Level2_ImageCompressionGrayLevel(ımg, Img_encode, restored_ımage):
+    img = readPILimg(ımg)
     arr = PIL2np(img)
 
     # Dosya açar ve içine veri aktarır.
-    with open("Level2_grayLevelImage.txt", "w+") as file:
+    with open("gry_ımg.txt", "w+") as file:
         pass
-    with open("Level2_grayLevelImage.txt", "r+") as file:
+    with open("gry_ımg.txt", "r+") as file:
         writeMatrixToFile(file, arr)
 
-    print("------------------------------------------------COMPRESSION")
-    encoding, tree = Huffman.Huffman_Encoding(readFileToList("Level2_grayLevelImage.txt"))
+    print("COMPRESSION")
+    encoding, tree = Huffman.Huffman_Encoding(readFileToList("gry_ımg.txt"))
     print("Encoded output", encoding)
 
     # bu arrayden değerler okunacak
-    gray_level_2DArray = arr
+    gray2DArray = arr
     huffman_encoding = Huffman.Calculate_Codes(tree)
 
     # bu arraye binary kodlar yazılacak
-    huffman_BinaryEncoding = []
-    for ind in range(len(gray_level_2DArray)):
-        col = []
-        for ind2 in range(len(gray_level_2DArray[0])):
-            col.append((huffman_encoding[gray_level_2DArray[ind][ind2]]))
-        huffman_BinaryEncoding.append(col)
+    bin_encoding = []
+    for i in range(len(gray2DArray)):
+        colum = []
+        for j in range(len(gray2DArray[0])):
+            colum.append((huffman_encoding[gray2DArray[i][j]]))
+        bin_encoding.append(colum)
 
-    with open(Level2_Image_Encode, "w+") as f:
-        writeMatrixToFile(f, huffman_BinaryEncoding)
+    with open(Img_encode, "w+") as a:
+        writeMatrixToFile(a, bin_encoding)
 
-    path = Level2_Image_Encode
+    path = Img_encode
     h = HuffmanCoding(path)
 
     output_path = h.compress()
     print("Compressed file path: " + output_path)
 
-    print("------------------------------------------------DECOMPRESSION")
+    print("DECOMPRESSION")
 
     decom_path = h.decompress(output_path)
     print("Decompressed file path: " + decom_path)
 
-    bin_Array_fromDecompressfile = readFileTo2DArray(decom_path, str)
-    binfileRow = (len(bin_Array_fromDecompressfile))
-    binfileColmn = (len(bin_Array_fromDecompressfile[0]))
+    ArrayBin = readFileTo2DArray(decom_path, str)
+    row = (len(ArrayBin))
+    column = (len(ArrayBin[0]))
     # text to str.
-    bin_file = open(decom_path)
-    encode_str = bin_file.read()
-    bin_file.close()
+    bin = open(decom_path)
+    stringEncode = bin.read()
+    bin.close()
 
     decom_path = np.array(decom_path, copy=True)
 
+    print("Decoded Output", Huffman.Huffman_Decoding(stringEncode, tree))
+    strDecode = Huffman.Huffman_Decoding(stringEncode, tree)
 
-    print("Decoded Output", Huffman.Huffman_Decoding(encode_str, tree))
-    decode_str= Huffman.Huffman_Decoding(encode_str, tree)
+    decode_arr = np.fromstring(strDecode, dtype=int, sep=' ')
+    lastarr = decode_arr.reshape(row ,column)
 
-    decode_arr = np.fromstring(decode_str, dtype=int, sep=' ')
-    decode_array = decode_arr.reshape(binfileRow,binfileColmn)
-    print(decode_array)
-
-    convertMatrixToImage(decode_array, Level2_restoredImage)
+    convertMatrixToImage(lastarr, restored_ımage)
 
 
-def Level3(img, Level3_diff_encode, Level3_restoredImage):
-    level3Img = readPILimg(img)
-    level3ImgNpArray = PIL2np(level3Img)
-    print(level3ImgNpArray)
+def Level3_ImageCompressionGrayLeveldifferences(image, diff_encode, restoredImage):
+    lev_3Img = readPILimg(image)
+    ImgNpArray = PIL2np(lev_3Img)
 
-    level3ImgArray = Array2DToList2D(level3ImgNpArray)
-    diff_arr = difference(level3ImgArray)
-    diff_arr = np.array(diff_arr)
-    print("difference pixels :", difference(diff_arr))
+    ImgArray = Array2DToList2D(ImgNpArray)
+    difference_array = difference(ImgArray)
+    difference_array = np.array(difference_array)
+    print("difference pixels :", difference(difference_array))
 
     # Dosya açar ve içine veri aktarır.
     with open("Level3_diff.txt", "w+") as file:
         pass
     with open("Level3_diff.txt", "r+") as file:
-        writeMatrixToFile(file, diff_arr)
+        writeMatrixToFile(file, difference_array)
 
     print("------------------------------------------------COMPRESSION")
     encoding, tree = Huffman.Huffman_Encoding(readFileToList("Level3_diff.txt"))
     print("Encoded output", encoding)
 
     # bu arrayden değerler okunacak
-    diff_2DArray = diff_arr
-    huffman_encoding = Huffman.Calculate_Codes(tree)
+    difference_2DArray = difference_array
+    huff_encode = Huffman.Calculate_Codes(tree)
 
     # bu arraye binary kodlar yazılacak
-    huffman_BinaryEncoding = []
-    for ind in range(len(diff_2DArray)):
-        col = []
-        for ind2 in range(len(diff_2DArray[0])):
-            col.append((huffman_encoding[diff_2DArray[ind][ind2]]))
-        huffman_BinaryEncoding.append(col)
+    binEncode = []
+    for ind in range(len(difference_2DArray)):
+        column = []
+        for ind2 in range(len(difference_2DArray[0])):
+            column.append((huff_encode[difference_2DArray[ind][ind2]]))
+        binEncode.append(column)
 
+    with open(diff_encode, "w+") as f:
+        writeMatrixToFile(f, binEncode)
 
-    with open(Level3_diff_encode, "w+") as f:
-        writeMatrixToFile(f, huffman_BinaryEncoding)
-
-    path = Level3_diff_encode
+    path = diff_encode
     h = HuffmanCoding(path)
-
     output_path = h.compress()
     print("Compressed file path: " + output_path)
 
-    print("------------------------------------------------DECOMPRESSION")
+    print("DECOMPRESSION")
 
     decom_path = h.decompress(output_path)
     print("Decompressed file path: " + decom_path)
 
-    bin_Array_fromDecompressfile = readFileTo2DArray(decom_path, str)
-    print(bin_Array_fromDecompressfile)
-    binfileRow = (len(bin_Array_fromDecompressfile))
-    binfileColmn = (len(bin_Array_fromDecompressfile[0]))
+    decompressfile = readFileTo2DArray(decom_path, str)
+
+    Row = (len(decompressfile))
+    Colmn = (len(decompressfile[0]))
     # text to str.
-    bin_file = open(decom_path)
-    encode_str = bin_file.read()
-    bin_file.close()
+    binfile = open(decom_path)
+    encode = binfile.read()
+    binfile.close()
 
     decom_path = np.array(decom_path, copy=True)
 
-    print("Decoded Output", Huffman.Huffman_Decoding(encode_str, tree))
-    decode_str = Huffman.Huffman_Decoding(encode_str, tree)
+    print("Decoded Output", Huffman.Huffman_Decoding(encode, tree))
+    decode_str = Huffman.Huffman_Decoding(encode, tree)
 
     decode_arr = np.fromstring(decode_str, dtype=int, sep=' ')
-    decode_array = decode_arr.reshape(binfileRow, binfileColmn)
+    decode_array = decode_arr.reshape(Row, Colmn)
     print("-----------")
     print(decode_array)
 
-    original_image = reDifference(decode_array)
-    print(original_image)
-    convertMatrixToImage(original_image, Level3_restoredImage)
+    original = reDifference(decode_array)
 
+    convertMatrixToImage(original, restoredImage)
 
-    #convertMatrixToImage(diff_array_new, Level3_restoredImage)
-    # -------------------
-    # level3Img = readPILimg("muhi.png")
-    #
-    # level3ImgArray = PIL2np(level3Img)
-    # print(level3ImgArray)
-    # level3_nrows = len(level3ImgArray)
-    # level3_ncols = len(level3ImgArray[0])
-    #
-    # diff_arr = difference(newImgArr)
-    # print(diff_arr)
-    # print("difference pixels :", difference(newImgArr))
-    #
-    # with open("Level3.txt", "w+") as diff_file:
-    #     writeMatrixToFile(diff_file, diff_arr)
-    # with open("Level3.txt", "r+") as diff_file:
-    #     diff_encoding, diff_tree = Huffman.Huffman_Encoding(readFileToList("Level3.txt"))
-    #     print("Encoded output", diff_encoding)
-    # os.remove("Level3.txt")
-    #
-    # # # saves binary code in new file.
-    # with open("level3_compressed_file.txt", "w+") as f:
-    #     f.write(diff_encoding)
-    # with open("level3_diffArray_file.txt", "w+") as f:
-    #     f.write(diff_encoding)
-    #
-    # level3_compressedFile = open("level3_compressed_file.txt", "r+")
-    # newDiffEncoding = level3_compressedFile.read()
-    # print("Decoded Output", Huffman.Huffman_Decoding(newDiffEncoding, diff_tree))
-    #
-    # newlevel3ImgArray = strToArr2DWithSpace(Huffman.Huffman_Decoding(newDiffEncoding, diff_tree), level3_nrows,
-    #                                         level3_ncols)
-    # print(newlevel3ImgArray)
-    #
-    # # convertMatrixToImage(newImgArr)
-    # # stringToArray2DForImg(14, 12, newImgArr)
-    # convertMatrixToImage(newlevel3ImgArray, "level3restoredImg.png")
-
-    # --------------------------------------------
-
-
-def Level4(img):
+def Level4ImageCompression(img):
 
     RGB_comp(img, 'blue', "blue.png")
     RGB_comp(img, 'green', "green.png")
@@ -270,45 +223,49 @@ def Level4(img):
     print(" ")
     print(" ")
 
-    print("For Blue Img:")
-    Level2(input_image="blue.png", Level2_Image_Encode="blue_Image_encode.txt", Level2_restoredImage="blue_restored_Image.png")
+    print("Blue Img:")
+    Level2_ImageCompressionGrayLevel(ımg="blue.png",
+                                     Img_encode="bluencode.txt",
+                                     restored_ımage="bluerestoredImage.png")
 
-    print(" ")
-    print(" ")
-
-    print("For Green Img:")
-    Level2(input_image="green.png", Level2_Image_Encode="green_Image_encode.txt", Level2_restoredImage="green_restored_Image.png")
-
-    print(" ")
-    print(" ")
-
-    print("For Red Img:")
-    Level2(input_image="red.png", Level2_Image_Encode="red_Image_encode.txt", Level2_restoredImage="red_restored_Image.png")
+    print("Green Img:")
+    Level2_ImageCompressionGrayLevel(ımg="green.png",
+                                     Img_encode="greenencode.txt",
+                                     restored_ımage="greenrestoredImage.png")
 
 
-def Level5(img):
+    print("Red Img:")
+    Level2_ImageCompressionGrayLevel(ımg="red.png",
+                                     Img_encode="redencode.txt",
+                                     restored_ımage="redrestoredImage.png")
+
+
+def Level5ImageCompressionColordifferences(img):
 
     RGB_comp(img, 'blue', "blue.png")
     RGB_comp(img, 'green', "green.png")
     RGB_comp(img, "red", "red.png")
 
     print("For Blue Img:")
-    Level3(img="blue.png", Level3_diff_encode="blue_diff_encode.txt",
-           Level3_restoredImage="blue_restored_DiffImage.png")
+    Level3_ImageCompressionGrayLeveldifferences(image="blue.png",
+                                                diff_encode="blue_diff_encode.txt",
+                                                restoredImage="blue_restored_DiffImage.png")
 
     print(" ")
     print(" ")
 
     print("For Green Img:")
-    Level3(img="green.png", Level3_diff_encode="green_diff_encode.txt",
-           Level3_restoredImage="green_restored_DiffImage.png")
+    Level3_ImageCompressionGrayLeveldifferences(image="green.png",
+                                                diff_encode="green_diff_encode.txt",
+                                                restoredImage="green_restored_DiffImage.png")
 
     print(" ")
     print(" ")
 
     print("For Red Img:")
-    Level3(img="red.png", Level3_diff_encode="red_diff_encode.txt",
-           Level3_restoredImage="red_restored_DiffImage.png")
+    Level3_ImageCompressionGrayLeveldifferences(image="red.png",
+                                                diff_encode="red_diff_encode.txt",
+                                                restoredImage="red_restored_DiffImage.png")
 
 
 def Array2DToList2D(npArray):
@@ -328,7 +285,7 @@ def difference(arr):
     pivot_arr = []
     for i in range(nrow):
         pivot_arr.append(arr[i][0])
-    with open("pivot.txt", "w+")as f:
+    with open("pivot.txt", "w+" )as f:
         pass
     with open("pivot.txt", "r+") as f:
 
@@ -371,7 +328,7 @@ def reDifference(diff_arr):
 
     for ind in range(nrow):
         for j in range(1, ncolumn):
-            arr[ind][j] = darr[ind][j] + arr[ind][j-1]
+            arr[ind][j] = darr[ind][j] + arr[ind][ j -1]
 
     return arr
 
@@ -577,7 +534,7 @@ def threshold(im, T, LOW, HIGH):
     return im
 
 
-def RGB_comp(image_file_path, channel,str):
+def RGB_comp(image_file_path, channel ,str):
    # red channel -> 0, green channel -> 1 and blue channel -> 2
    if channel == 'red':
       channel_index = 0
